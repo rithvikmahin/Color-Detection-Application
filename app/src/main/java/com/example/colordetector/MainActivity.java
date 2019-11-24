@@ -7,9 +7,11 @@ import com.android.volley.toolbox.Volley;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
@@ -44,11 +46,21 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         //Checks for requests
-        if(requestCode==GET_FROM_GALLERY && resultCode == Activity.RESULT_OK) {
+        if(requestCode == GET_FROM_GALLERY && resultCode == Activity.RESULT_OK) {
             Uri selectedImage = data.getData();
             Bitmap bitmap = null;
             try {
                 bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImage);
+                int[] pixelArray = new int[bitmap.getHeight() * bitmap.getWidth()];
+                bitmap.getPixels(pixelArray, 0, bitmap.getWidth(), 0, 0, bitmap.getWidth(), bitmap.getHeight());
+                String R = Integer.toString(Color.red(pixelArray[0]));
+                String G = Integer.toString(Color.green(pixelArray[0]));
+                String B = Integer.toString(Color.blue(pixelArray[0]));
+                Log.d("Red", R);
+                Log.d("Green", G);
+                Log.d("Blue", B);
+
+
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             } catch (IOException e) {
