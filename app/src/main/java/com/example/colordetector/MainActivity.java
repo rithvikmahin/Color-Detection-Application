@@ -17,6 +17,10 @@ import android.widget.Button;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -52,25 +56,46 @@ public class MainActivity extends AppCompatActivity {
             try {
                 //Selects the image and saves it to the bitmap variable
                 bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImage);
+                //Scaling bitmap to 256 x 256
+                Bitmap scaledBitmap = bitmap.createScaledBitmap(bitmap, 256, 256, true);
                 //Array of the image's pixels that is currently empty
-                int[] pixelArray = new int[bitmap.getHeight() * bitmap.getWidth()];
+                int[] pixelArray = new int[scaledBitmap.getHeight() * scaledBitmap.getWidth()];
                 //Populates the array with the image's pixels
-                bitmap.getPixels(pixelArray, 0, bitmap.getWidth(), 0, 0, bitmap.getWidth(), bitmap.getHeight());
-                //Getting the R, G and B values of the first pixels
-                String R = Integer.toString(Color.red(pixelArray[0]));
-                String G = Integer.toString(Color.green(pixelArray[0]));
-                String B = Integer.toString(Color.blue(pixelArray[0]));
-                //Logging the values to test if they are valid values
-                Log.d("Red", R);
-                Log.d("Green", G);
-                Log.d("Blue", B);
-
-
+                scaledBitmap.getPixels(pixelArray, 0, scaledBitmap.getWidth(), 0, 0, scaledBitmap.getWidth(), scaledBitmap.getHeight());
+                findColors(pixelArray);
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
+    }
+    //Function to find the colors of an image
+    protected Map findColors(int[] pixelArray) {
+        //Hash map with counters for each color
+        Map<List<String>, Integer> colorCount = new HashMap<>(256);
+        //Find count of each pixel
+        for (int i = 0; i < pixelArray.length; i++) {
+            //Get R, G and B values of each pixel
+            String R = Integer.toString(Color.red(pixelArray[i]));
+            String G = Integer.toString(Color.green(pixelArray[i]));
+            String B = Integer.toString(Color.blue(pixelArray[i]));
+            //Connecting these values together for each color by grouping in a list
+            List<String> currentColor = new ArrayList<>(3);
+            currentColor.add(R);
+            currentColor.add(G);
+            currentColor.add(B);
+            //Getting the current counter value for the color
+            Integer value = colorCount.get(currentColor);
+            //If the color is not in the map, add it with a count of 1
+            if (value == null) {
+                colorCount.put(currentColor, 1);
+            } else {
+                //Or else increment the counter of the existing color by 1
+                colorCount.put(currentColor, value + 1);
+            }
+        }
+        System.out.println(colorCount);
+        return colorCount;
     }
 }
