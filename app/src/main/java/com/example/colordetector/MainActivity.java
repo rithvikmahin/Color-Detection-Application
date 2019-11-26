@@ -31,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         Button uploadButton = findViewById(R.id.upload);
-
+        //Sets a listener to open the gallery upon clicking the upload button
         uploadButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -50,12 +50,17 @@ public class MainActivity extends AppCompatActivity {
             Uri selectedImage = data.getData();
             Bitmap bitmap = null;
             try {
+                //Selects the image and saves it to the bitmap variable
                 bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImage);
+                //Array of the image's pixels that is currently empty
                 int[] pixelArray = new int[bitmap.getHeight() * bitmap.getWidth()];
+                //Populates the array with the image's pixels
                 bitmap.getPixels(pixelArray, 0, bitmap.getWidth(), 0, 0, bitmap.getWidth(), bitmap.getHeight());
+                //Getting the R, G and B values of the first pixels
                 String R = Integer.toString(Color.red(pixelArray[0]));
                 String G = Integer.toString(Color.green(pixelArray[0]));
                 String B = Integer.toString(Color.blue(pixelArray[0]));
+                //Logging the values to test if they are valid values
                 Log.d("Red", R);
                 Log.d("Green", G);
                 Log.d("Blue", B);
