@@ -15,9 +15,12 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
+import org.json.JSONObject;
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -56,13 +59,16 @@ public class MainActivity extends AppCompatActivity {
             try {
                 //Selects the image and saves it to the bitmap variable
                 bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImage);
-                //Scaling bitmap to 256 x 256
-                Bitmap scaledBitmap = bitmap.createScaledBitmap(bitmap, 256, 256, true);
+                //Scaling bitmap
+                float aspectRatio = bitmap.getWidth() / (float) bitmap.getHeight();
+                int width = 512;
+                int height = Math.round(width / aspectRatio);
+                Bitmap scaledBitmap = bitmap.createScaledBitmap(bitmap, width, height, true);
                 //Array of the image's pixels that is currently empty
                 int[] pixelArray = new int[scaledBitmap.getHeight() * scaledBitmap.getWidth()];
                 //Populates the array with the image's pixels
                 scaledBitmap.getPixels(pixelArray, 0, scaledBitmap.getWidth(), 0, 0, scaledBitmap.getWidth(), scaledBitmap.getHeight());
-                findColors(pixelArray);
+                sendRequest(pixelArray);
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             } catch (IOException e) {
@@ -97,5 +103,19 @@ public class MainActivity extends AppCompatActivity {
         }
         System.out.println(colorCount);
         return colorCount;
+    }
+    //Function to send a GET request to get verbal information about a color
+    protected void sendRequest(int[] pixelArray) {
+        Map<List<String>, Integer> colorCount = findColors(pixelArray);
+        //Finds the maximum value count in the map
+        Integer maximum = (Integer) Collections.max(colorCount.values());
+        int numberOfColors = 0;
+        //Returns all keys that have this maximum value to find colors that occur the exact number of times
+        for (Map.Entry<List<String>, Integer> entry : colorCount.entrySet()) {
+            if (entry.getValue() == maximum) {
+                numberOfColors++;
+                System.out.println(entry.getKey());
+            }
+        }
     }
 }
