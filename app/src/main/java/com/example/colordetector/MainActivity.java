@@ -48,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
         //Checks for requests
         if(requestCode == GET_FROM_GALLERY && resultCode == Activity.RESULT_OK) {
             Uri selectedImage = data.getData();
-            Bitmap bitmap = null;
+            Bitmap bitmap;
             try {
                 bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImage);
                 int[] pixelArray = new int[bitmap.getHeight() * bitmap.getWidth()];
@@ -56,9 +56,9 @@ public class MainActivity extends AppCompatActivity {
                 String R = Integer.toString(Color.red(pixelArray[0]));
                 String G = Integer.toString(Color.green(pixelArray[0]));
                 String B = Integer.toString(Color.blue(pixelArray[0]));
-                Log.d("Red", R);
-                Log.d("Green", G);
-                Log.d("Blue", B);
+                Log.e("Red", R);
+                Log.e("Green", G);
+                Log.e("Blue", B);
 
 
             } catch (FileNotFoundException e) {
