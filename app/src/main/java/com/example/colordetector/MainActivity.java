@@ -110,7 +110,7 @@ public class MainActivity extends AppCompatActivity {
         //Finds the maximum value count in the map
         Integer maximum = (Integer) Collections.max(colorCount.values());
         int numberOfColors = 0;
-        //Returns all keys that have this maximum value to find colors that occur the exact number of times
+        //Returns all keys that have this maximum value to find colors that occur this exact number of times
         for (Map.Entry<List<String>, Integer> entry : colorCount.entrySet()) {
             if (entry.getValue() == maximum) {
                 numberOfColors++;
