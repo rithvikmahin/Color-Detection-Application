@@ -19,6 +19,7 @@ import org.json.JSONObject;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -101,7 +102,7 @@ public class MainActivity extends AppCompatActivity {
                 colorCount.put(currentColor, value + 1);
             }
         }
-        System.out.println(colorCount);
+        //System.out.println(colorCount);
         return colorCount;
     }
     //Function to send a GET request to get verbal information about a color
@@ -109,12 +110,20 @@ public class MainActivity extends AppCompatActivity {
         Map<List<String>, Integer> colorCount = findColors(pixelArray);
         int numberOfColors = 0;
         //Returns all keys that have this maximum value to find colors that occur this exact number of times
-        //Finds the maximum value count in the map
-        Integer maximum = Collections.max(colorCount.values());
-        for (Map.Entry<List<String>, Integer> entry : colorCount.entrySet()) {
-            if (entry.getValue() == maximum) {
-                numberOfColors++;
-                System.out.println(entry.getKey());
+        while (numberOfColors != 3) {
+            //Finds the maximum value count in the map
+            Integer maximum = Collections.max(colorCount.values());
+            for (Map.Entry<List<String>, Integer> entry : colorCount.entrySet()) {
+                if (entry.getValue() == maximum) {
+                    numberOfColors++;
+                    //Checking output
+                    System.out.println(entry.getKey());
+                    System.out.println(entry.getValue());
+                    System.out.println(pixelArray.length);
+                    //Changing the value of this color to 0 so it no longer registers as a maximum
+                    colorCount.put(entry.getKey(), 0);
+                    break;
+                }
             }
         }
         // To do - If this above loop doesn't return 3 colors, search for the remaining ones with a new maximum.
