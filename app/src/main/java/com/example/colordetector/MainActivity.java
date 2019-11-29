@@ -107,15 +107,16 @@ public class MainActivity extends AppCompatActivity {
     //Function to send a GET request to get verbal information about a color
     protected void sendRequest(int[] pixelArray) {
         Map<List<String>, Integer> colorCount = findColors(pixelArray);
-        //Finds the maximum value count in the map
-        Integer maximum = (Integer) Collections.max(colorCount.values());
         int numberOfColors = 0;
         //Returns all keys that have this maximum value to find colors that occur this exact number of times
+        //Finds the maximum value count in the map
+        Integer maximum = Collections.max(colorCount.values());
         for (Map.Entry<List<String>, Integer> entry : colorCount.entrySet()) {
             if (entry.getValue() == maximum) {
                 numberOfColors++;
                 System.out.println(entry.getKey());
             }
         }
+        // To do - If this above loop doesn't return 3 colors, search for the remaining ones with a new maximum.
     }
 }
