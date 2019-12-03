@@ -15,8 +15,15 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
+import org.json.JSONObject;
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -31,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         Button uploadButton = findViewById(R.id.upload);
-
+        //Sets a listener to open the gallery upon clicking the upload button
         uploadButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -50,21 +57,64 @@ public class MainActivity extends AppCompatActivity {
             Uri selectedImage = data.getData();
             Bitmap bitmap;
             try {
+                //Selects the image and saves it to the bitmap variable
                 bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImage);
-                int[] pixelArray = new int[bitmap.getHeight() * bitmap.getWidth()];
-                bitmap.getPixels(pixelArray, 0, bitmap.getWidth(), 0, 0, bitmap.getWidth(), bitmap.getHeight());
-                String R = Integer.toString(Color.red(pixelArray[0]));
-                String G = Integer.toString(Color.green(pixelArray[0]));
-                String B = Integer.toString(Color.blue(pixelArray[0]));
-                Log.e("Red", R);
-                Log.e("Green", G);
-                Log.e("Blue", B);
-
-
+                //Scaling bitmap
+                float aspectRatio = bitmap.getWidth() / (float) bitmap.getHeight();
+                int width = 512;
+                int height = Math.round(width / aspectRatio);
+                Bitmap scaledBitmap = bitmap.createScaledBitmap(bitmap, width, height, true);
+                //Array of the image's pixels that is currently empty
+                int[] pixelArray = new int[scaledBitmap.getHeight() * scaledBitmap.getWidth()];
+                //Populates the array with the image's pixels
+                scaledBitmap.getPixels(pixelArray, 0, scaledBitmap.getWidth(), 0, 0, scaledBitmap.getWidth(), scaledBitmap.getHeight());
+                sendRequest(pixelArray);
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             } catch (IOException e) {
                 e.printStackTrace();
+            }
+        }
+    }
+    //Function to find the colors of an image
+    protected Map findColors(int[] pixelArray) {
+        //Hash map with counters for each color
+        Map<List<String>, Integer> colorCount = new HashMap<>(256);
+        //Find count of each pixel
+        for (int i = 0; i < pixelArray.length; i++) {
+            //Get R, G and B values of each pixel
+            String R = Integer.toString(Color.red(pixelArray[i]));
+            String G = Integer.toString(Color.green(pixelArray[i]));
+            String B = Integer.toString(Color.blue(pixelArray[i]));
+            //Connecting these values together for each color by grouping in a list
+            List<String> currentColor = new ArrayList<>(3);
+            currentColor.add(R);
+            currentColor.add(G);
+            currentColor.add(B);
+            //Getting the current counter value for the color
+            Integer value = colorCount.get(currentColor);
+            //If the color is not in the map, add it with a count of 1
+            if (value == null) {
+                colorCount.put(currentColor, 1);
+            } else {
+                //Or else increment the counter of the existing color by 1
+                colorCount.put(currentColor, value + 1);
+            }
+        }
+        System.out.println(colorCount);
+        return colorCount;
+    }
+    //Function to send a GET request to get verbal information about a color
+    protected void sendRequest(int[] pixelArray) {
+        Map<List<String>, Integer> colorCount = findColors(pixelArray);
+        //Finds the maximum value count in the map
+        Integer maximum = (Integer) Collections.max(colorCount.values());
+        int numberOfColors = 0;
+        //Returns all keys that have this maximum value to find colors that occur this exact number of times
+        for (Map.Entry<List<String>, Integer> entry : colorCount.entrySet()) {
+            if (entry.getValue() == maximum) {
+                numberOfColors++;
+                System.out.println(entry.getKey());
             }
         }
     }
