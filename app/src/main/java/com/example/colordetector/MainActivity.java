@@ -96,6 +96,7 @@ public class MainActivity extends AppCompatActivity {
             Integer value = colorCount.get(currentColor);
             //If the color is not in the map, add it with a count of 1
             if (value == null) {
+                //Adds color
                 colorCount.put(currentColor, 1);
             } else {
                 //Or else increment the counter of the existing color by 1
