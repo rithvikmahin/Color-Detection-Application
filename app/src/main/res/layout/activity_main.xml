@@ -8,9 +8,24 @@
 
     <Button
         android:id="@+id/upload"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="259dp"
+        android:layout_height="101dp"
         android:text="Upload"
-        tools:layout_editor_absoluteX="164dp"
-        tools:layout_editor_absoluteY="2dp" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.514" />
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:contentDescription="/@Color"
+        app:layout_constraintBottom_toBottomOf="@+id/upload"
+        app:layout_constraintEnd_toEndOf="@+id/upload"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="@+id/upload"
+        app:srcCompat="@drawable/colorlogo" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
