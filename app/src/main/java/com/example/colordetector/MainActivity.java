@@ -14,12 +14,18 @@ import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.text.TextUtils;
 
 import org.json.JSONObject;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.math.BigDecimal;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -107,7 +113,8 @@ public class MainActivity extends AppCompatActivity {
         return colorCount;
     }
     //Function to send a GET request to get verbal information about a color
-    protected void sendRequest(int[] pixelArray) {
+    protected void sendRequest(int[] pixelArray) throws IOException {
+        String url = "http://thecolorapi.com/id";
         Map<List<String>, Integer> colorCount = findColors(pixelArray);
         int numberOfColors = 0;
         //Returns all keys that have this maximum value to find colors that occur this exact number of times
@@ -117,11 +124,14 @@ public class MainActivity extends AppCompatActivity {
             for (Map.Entry<List<String>, Integer> entry : colorCount.entrySet()) {
                 if (entry.getValue() == maximum) {
                     numberOfColors++;
-                    //Checking output
-                    System.out.println(entry.getKey());
-                    System.out.println(entry.getValue());
-                    System.out.println(pixelArray.length);
-                    //Changing the value of this color to 0 so it no longer registers as a maximum
+                    String rgb = TextUtils.join(",", entry.getKey());
+                    //System.out.println(rgb);
+                    String query = url + "?" + "rgb=" + rgb;
+                    //System.out.println(query);
+                    /**URLConnection connection = new URL(query).openConnection();
+                    connection.setRequestProperty("Accept-Charset", "UTF-8");
+                    InputStream response = connection.getInputStream();
+                    System.out.println(response.read());**/
                     colorCount.put(entry.getKey(), 0);
                     break;
                 }
