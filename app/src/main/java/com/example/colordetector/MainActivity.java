@@ -1,7 +1,13 @@
 package com.example.colordetector;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.android.volley.Request;
 import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.RetryPolicy;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 
 import android.app.Activity;
@@ -18,10 +24,14 @@ import android.text.TextUtils;
 
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.math.BigDecimal;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -114,6 +124,7 @@ public class MainActivity extends AppCompatActivity {
     }
     //Function to send a GET request to get verbal information about a color
     protected void sendRequest(int[] pixelArray) throws IOException {
+        String inputLine;
         String url = "http://thecolorapi.com/id";
         Map<List<String>, Integer> colorCount = findColors(pixelArray);
         int numberOfColors = 0;
@@ -125,18 +136,48 @@ public class MainActivity extends AppCompatActivity {
                 if (entry.getValue() == maximum) {
                     numberOfColors++;
                     String rgb = TextUtils.join(",", entry.getKey());
-                    //System.out.println(rgb);
                     String query = url + "?" + "rgb=" + rgb;
-                    //System.out.println(query);
-                    /**URLConnection connection = new URL(query).openConnection();
-                    connection.setRequestProperty("Accept-Charset", "UTF-8");
-                    InputStream response = connection.getInputStream();
-                    System.out.println(response.read());**/
+                    System.out.println(query);
+                    JsonObjectRequest data = new JsonObjectRequest
+                            (Request.Method.GET, query, null, new Response.Listener<JSONObject>() {
+
+                                @Override
+                                public void onResponse(JSONObject response) {
+                                    Log.d("Response: ", response.toString());
+                                }
+                            }, new Response.ErrorListener() {
+
+                                @Override
+                                public void onErrorResponse(VolleyError error) {
+                                    error.printStackTrace();
+                                }
+                            });
+
+                    data.setRetryPolicy(new RetryPolicy() {
+                        @Override
+                        public int getCurrentTimeout() {
+                            return 50000;
+                        }
+
+                        @Override
+                        public int getCurrentRetryCount() {
+                            return 50000;
+                        }
+
+                        @Override
+                        public void retry(VolleyError error) throws VolleyError {
+
+                        }
+                    });
+
+                    requestQueue = Volley.newRequestQueue(this);
+                    requestQueue.add(data);
+                    //new GetUrlContentTask().execute(query);
+                    //System.out.println("Check execution");
                     colorCount.put(entry.getKey(), 0);
                     break;
                 }
             }
         }
-        // To do - If this above loop doesn't return 3 colors, search for the remaining ones with a new maximum.
     }
 }
