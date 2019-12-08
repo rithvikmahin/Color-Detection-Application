@@ -23,6 +23,7 @@ import android.view.View;
 import android.widget.Button;
 import android.text.TextUtils;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.FileNotFoundException;
@@ -83,7 +84,6 @@ public class MainActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
         }
-        openWebPage("https://www.thecolorapi.com/");
     }
     //Function to find the colors of an image
     protected Map findColors(int[] pixelArray) {
@@ -160,8 +160,25 @@ public class MainActivity extends AppCompatActivity {
 
 
     protected void display(JSONObject input) {
-        JSONObject images = input.get("image").getAsJsonObject;
-        
+        try {
+            JSONObject images = input.getJSONObject("image");
+            System.out.println(images.toString() + "images");
+            String wholeThing = images.toString();
+            System.out.println(wholeThing + " wholething");
+            int index1 = wholeThing.indexOf("named\":");
+            int index2 = wholeThing.indexOf("\"}", index1);
+            String web1 = wholeThing.substring(index1 + 8, index2);
+            String web = web1.substring(0, web1.indexOf("com") + 3) + web1.substring(web1.indexOf("com") + 4);
+            System.out.println(web+" web");
+            openWebPage(web);
+            JSONObject namedLink = images.getJSONObject("named");
+            System.out.println(namedLink + "link");
+            String actualLink = namedLink.toString();
+            System.out.println(actualLink + "hello");
+            openWebPage(actualLink);
+        } catch(JSONException e) {
+            e.printStackTrace();
+        }
     }
     /**
      * Open a web page of a specified URL
