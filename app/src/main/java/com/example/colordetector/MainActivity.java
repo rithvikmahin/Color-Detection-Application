@@ -9,11 +9,13 @@ import com.android.volley.RetryPolicy;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -55,14 +57,13 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         Button uploadButton = findViewById(R.id.upload);
-        //Sets a listener to open the gallery upon clicking the upload button
+        //Sets a listener to open the gallery upon clicking the upload button.
         uploadButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 startActivityForResult(new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.INTERNAL_CONTENT_URI), GET_FROM_GALLERY);
             }
         });
-
     }
 
     @Override
@@ -92,6 +93,7 @@ public class MainActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
         }
+        openWebPage("https://www.thecolorapi.com/");
     }
     //Function to find the colors of an image
     protected Map findColors(int[] pixelArray) {
@@ -178,6 +180,21 @@ public class MainActivity extends AppCompatActivity {
                     break;
                 }
             }
+        }
+    }
+    protected void display(JSONObject input) {
+        
+    }
+    /**
+     * Open a web page of a specified URL
+     *
+     * @param url URL to open
+     */
+    protected void openWebPage(String url) {
+        Uri webpage = Uri.parse(url);
+        Intent intent = new Intent(Intent.ACTION_VIEW, webpage);
+        if (intent.resolveActivity(getPackageManager()) != null) {
+            startActivity(intent);
         }
     }
 }
