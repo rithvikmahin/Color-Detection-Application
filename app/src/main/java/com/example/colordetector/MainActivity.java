@@ -1,11 +1,10 @@
 package com.example.colordetector;
 
 import androidx.appcompat.app.AppCompatActivity;
-
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
-import com.android.volley.RetryPolicy;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
@@ -24,18 +23,8 @@ import android.text.TextUtils;
 
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.math.BigDecimal;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -49,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        new NukeSSLCerts().nuke();
         super.onCreate(savedInstanceState);
         //Sets a queue for requests
         requestQueue = Volley.newRequestQueue(this);
@@ -85,7 +75,7 @@ public class MainActivity extends AppCompatActivity {
                 int[] pixelArray = new int[scaledBitmap.getHeight() * scaledBitmap.getWidth()];
                 //Populates the array with the image's pixels
                 scaledBitmap.getPixels(pixelArray, 0, scaledBitmap.getWidth(), 0, 0, scaledBitmap.getWidth(), scaledBitmap.getHeight());
-                sendRequest(pixelArray);
+                process(pixelArray);
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             } catch (IOException e) {
@@ -123,7 +113,7 @@ public class MainActivity extends AppCompatActivity {
         return colorCount;
     }
     //Function to send a GET request to get verbal information about a color
-    protected void sendRequest(int[] pixelArray) throws IOException {
+    protected void process(int[] pixelArray) throws IOException {
         String inputLine;
         String url = "http://thecolorapi.com/id";
         Map<List<String>, Integer> colorCount = findColors(pixelArray);
@@ -138,40 +128,7 @@ public class MainActivity extends AppCompatActivity {
                     String rgb = TextUtils.join(",", entry.getKey());
                     String query = url + "?" + "rgb=" + rgb;
                     System.out.println(query);
-                    JsonObjectRequest data = new JsonObjectRequest
-                            (Request.Method.GET, query, null, new Response.Listener<JSONObject>() {
-
-                                @Override
-                                public void onResponse(JSONObject response) {
-                                    Log.d("Response: ", response.toString());
-                                }
-                            }, new Response.ErrorListener() {
-
-                                @Override
-                                public void onErrorResponse(VolleyError error) {
-                                    error.printStackTrace();
-                                }
-                            });
-
-                    data.setRetryPolicy(new RetryPolicy() {
-                        @Override
-                        public int getCurrentTimeout() {
-                            return 50000;
-                        }
-
-                        @Override
-                        public int getCurrentRetryCount() {
-                            return 50000;
-                        }
-
-                        @Override
-                        public void retry(VolleyError error) throws VolleyError {
-
-                        }
-                    });
-
-                    requestQueue = Volley.newRequestQueue(this);
-                    requestQueue.add(data);
+                    sendRequest("https://thecolorapi.com/id?rgb=0,71,171");
                     //new GetUrlContentTask().execute(query);
                     //System.out.println("Check execution");
                     colorCount.put(entry.getKey(), 0);
@@ -179,5 +136,27 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         }
+    }
+
+    public void sendRequest(final String query) {
+
+        JsonObjectRequest data = new JsonObjectRequest
+                (Request.Method.GET, query, null, new Response.Listener<JSONObject>() {
+
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        Log.d("Response: ", response.toString());
+                        System.out.println(response);
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        error.printStackTrace();
+                    }
+
+                });
+
+        data.setRetryPolicy(new DefaultRetryPolicy(5000, 1, 1.0f));
+        requestQueue.add(data);
     }
 }
