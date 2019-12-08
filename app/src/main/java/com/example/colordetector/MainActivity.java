@@ -144,8 +144,7 @@ public class MainActivity extends AppCompatActivity {
 
                     @Override
                     public void onResponse(JSONObject response) {
-                        Log.d("Response: ", response.toString());
-                        System.out.println(response);
+                        display(response);
                     }
                 }, new Response.ErrorListener() {
                     @Override
@@ -157,8 +156,11 @@ public class MainActivity extends AppCompatActivity {
 
         data.setRetryPolicy(new DefaultRetryPolicy(5000, 1, 1.0f));
         requestQueue.add(data);
+    }
+
 
     protected void display(JSONObject input) {
+        JSONObject images = input.get("image").getAsJsonObject;
         
     }
     /**
