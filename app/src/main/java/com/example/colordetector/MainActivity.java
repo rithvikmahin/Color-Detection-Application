@@ -114,8 +114,7 @@ public class MainActivity extends AppCompatActivity {
     }
     //Function to send a GET request to get verbal information about a color
     protected void process(int[] pixelArray) throws IOException {
-        String inputLine;
-        String url = "http://thecolorapi.com/id";
+        String url = "https://thecolorapi.com/id";
         Map<List<String>, Integer> colorCount = findColors(pixelArray);
         int numberOfColors = 0;
         //Returns all keys that have this maximum value to find colors that occur this exact number of times
@@ -128,9 +127,7 @@ public class MainActivity extends AppCompatActivity {
                     String rgb = TextUtils.join(",", entry.getKey());
                     String query = url + "?" + "rgb=" + rgb;
                     System.out.println(query);
-                    sendRequest("https://thecolorapi.com/id?rgb=0,71,171");
-                    //new GetUrlContentTask().execute(query);
-                    //System.out.println("Check execution");
+                    sendRequest(query);
                     colorCount.put(entry.getKey(), 0);
                     break;
                 }
