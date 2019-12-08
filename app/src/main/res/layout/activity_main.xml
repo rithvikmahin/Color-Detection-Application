@@ -4,28 +4,27 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#FEFECA"
+    android:backgroundTint="#FEFECA"
     tools:context=".MainActivity">
 
-    <Button
-        android:id="@+id/upload"
-        android:layout_width="259dp"
-        android:layout_height="101dp"
-        android:text="Upload"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.514" />
-
     <ImageView
-        android:id="@+id/imageView"
+        android:id="@+id/logo"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:contentDescription="/@Color"
-        app:layout_constraintBottom_toBottomOf="@+id/upload"
-        app:layout_constraintEnd_toEndOf="@+id/upload"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="@+id/upload"
         app:srcCompat="@drawable/colorlogo" />
+
+    <Button
+        android:id="@+id/upload"
+        android:layout_width="182dp"
+        android:layout_height="160dp"
+        android:background="@android:color/transparent"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="@+id/logo"
+        app:layout_constraintEnd_toEndOf="@+id/logo"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/logo"
+        app:layout_constraintVertical_bias="0.597" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
